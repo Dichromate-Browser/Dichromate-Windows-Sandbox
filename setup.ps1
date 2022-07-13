@@ -85,7 +85,7 @@ Write-Host "Done" -ForegroundColor Green
 Write-Host "Adding Desktop and Start Menu shortcuts... " -NoNewline
 
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("C:\Users\$env:USERNAME\Desktop\Dichromate-Sandbox.lnk")
+$Shortcut = $WshShell.CreateShortcut("C:\Users\$env:USERNAME\Desktop\Dichromate Sandbox.lnk")
 $Shortcut.TargetPath = Join-Path $installpath dichromate.wsb
 $Shortcut.IconLocation = Join-Path $installpath dichromate-sandbox.ico
 $Shortcut.Save()
