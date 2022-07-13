@@ -17,7 +17,6 @@ if (!(Test-Path $installpath)) {
         $removeVariable = $selectVersionpart -split "="
         $almostdone = $removeVariable[1]
         $version = $almostdone -replace ';',""
-        Set-Location $PSScriptRoot
         Write-Host "Downloading the installer"
         curl.exe -O -L https://github.com/Dichromate-Browser/Dichromate/releases/download/$version/dichromate-$version.exe
         Write-Host "Running the installer"
@@ -43,13 +42,12 @@ if (!(Test-Path $untrustedpath)) {
 
 Write-Host "Copying source files..." -NoNewline
 
-Set-Location $PSScriptRoot
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dichromate-sandbox.ico
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dichromate.wsb
 
-Copy-Item -Path (Join-Path $PSScriptRoot dichromate.wsb) $installpath -Force
+Copy-Item -Path dichromate.wsb $installpath -Force
 
-Copy-Item -Path (Join-Path $PSScriptRoot dichromate-sandbox.ico) $installpath -Force
+Copy-Item -Path dichromate-sandbox.ico $installpath -Force
 
 Write-Host "Done" -ForegroundColor Green 
 
