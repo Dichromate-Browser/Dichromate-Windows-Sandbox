@@ -40,14 +40,26 @@ if (!(Test-Path $untrustedpath)) {
     New-Item -ItemType Directory -Path $untrustedpath | Out-Null
 }
 
+$darktheme = "C:\Users\$env:USERNAME\AppData\Roaming\Dichromate-Sandbox"
+
+if (!(Test-Path $darktheme)) {
+    New-Item -ItemType Directory -Path $darktheme | Out-Null
+}
+
 Write-Host "Copying source files..." -NoNewline
 
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dichromate-sandbox.ico
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dichromate.wsb
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/darkmode.reg
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/import.bat
 
-Copy-Item -Path dichromate.wsb $installpath -Force
+Copy-Item -Path dichromate.wsb -Destination $installpath -Force
 
-Copy-Item -Path dichromate-sandbox.ico $installpath -Force
+Copy-Item -Path dichromate-sandbox.ico -Destination $installpath -Force
+
+Copy-Item -Path darkmode.reg -Destination $installpath -Force
+
+Copy-Item -Path import.bat -Destination $darktheme -Force
 
 Write-Host "Done" -ForegroundColor Green 
 
@@ -63,6 +75,12 @@ $fileContent | Set-Content $File
 
 $lineNumber2 = 11
 $textToAdd = "          <HostFolder>$untrustedpath</HostFolder>"
+$fileContent = Get-Content $File
+$fileContent[$lineNumber2-1] = $textToAdd
+$fileContent | Set-Content $File
+
+$lineNumber2 = 16
+$textToAdd = "          <HostFolder>$darkmode</HostFolder>"
 $fileContent = Get-Content $File
 $fileContent[$lineNumber2-1] = $textToAdd
 $fileContent | Set-Content $File
@@ -89,7 +107,7 @@ $Shortcut.IconLocation = Join-Path $installpath dichromate-sandbox.ico
 $Shortcut.Save()
 
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Dichromate-Sandbox.lnk")
+$Shortcut = $WshShell.CreateShortcut("C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Dichromate Sandbox.lnk")
 $Shortcut.TargetPath = Join-Path $installpath dichromate.wsb
 $Shortcut.IconLocation = Join-Path $installpath dichromate-sandbox.ico
 $Shortcut.Save()

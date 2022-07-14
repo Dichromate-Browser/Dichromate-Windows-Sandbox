@@ -1,0 +1,1 @@
+reg import C:\Users\WDAGUtilityAccount\Documents\darkmode.reg
