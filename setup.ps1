@@ -75,7 +75,7 @@ Write-Host "Copying source files... " -NoNewline
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate-sandbox.ico
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate.wsb
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/darkmode.reg
-curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/import.bat
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/dark-mode.bat
 
 Copy-Item -Path dichromate.wsb -Destination $installpath -Force
 
@@ -83,7 +83,7 @@ Copy-Item -Path dichromate-sandbox.ico -Destination $installpath -Force
 
 Copy-Item -Path darkmode.reg -Destination $installpath -Force
 
-Copy-Item -Path import.bat -Destination $darktheme -Force
+Copy-Item -Path dark-mode.bat -Destination $darktheme -Force
 
 Write-Host "Done" -ForegroundColor Green 
 
@@ -104,10 +104,10 @@ $fileContent[$lineNumber2-1] = $textToAdd
 $fileContent | Set-Content $File
 
 $lineNumber3 = 16
-$textToAdd = "          <HostFolder>$darkmode</HostFolder>"
+$textToAdd = "          <HostFolder>$darktheme</HostFolder>"
 $fileContent = Get-Content $File
 $fileContent[$lineNumber3-1] = $textToAdd
-$fileContent | Set-Content $File -Encoding Default
+$fileContent | Set-Content $File
 
 $NewContent = Get-Content -Path $File |
     ForEach-Object {
@@ -143,7 +143,7 @@ Write-Host "Cleaning up... " -NoNewline
 Remove-Item dichromate-sandbox.ico
 Remove-Item dichromate.wsb
 Remove-Item darkmode.reg
-Remove-Item import.bat
+Remove-Item dark-mode.bat
 
 Write-Host "Done" -ForegroundColor Green
 
