@@ -1,15 +1,43 @@
 $ErrorActionPreference = "Stop"
 
+$installpath = "C:\Users\$env:USERNAME\AppData\Local\Dichromate\Application"
+$darktheme = "C:\Users\$env:USERNAME\AppData\Roaming\Dichromate-Sandbox"
+$untrustedpath = "C:\Users\$env:USERNAME\Downloads\Untrusted Files"
+
+$uninstall = $args[0]
+
+if ($uninstall -eq "uninstall") {
+    $confirmremoval = Read-Host -Prompt "Do you want to uninstall the Windows Sandbox addon for Dichromate(Y/N)"
+    if (($confirmremoval -eq "Y") -or ($confirmremoval -eq "y")) {
+        Write-Host "Uninstalling Windows Sandbox Addon... " -NoNewline
+        Remove-Item -Recurse $darktheme -ErrorAction SilentlyContinue
+        Remove-Item (Join-Path $installpath dichromate.wsb) -ErrorAction SilentlyContinue
+        Remove-Item (Join-Path $installpath darkmode.reg) -ErrorAction SilentlyContinue
+        Remove-Item (Join-Path $installpath dichromate-sandbox.ico) -ErrorAction SilentlyContinue
+        Remove-Item "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Dichromate Sandbox.lnk" -ErrorAction SilentlyContinue
+        Remove-Item "C:\Users\$env:USERNAME\Desktop\Dichromate Sandbox.lnk" -ErrorAction SilentlyContinue
+        Write-Host "Done" -ForegroundColor Green
+        Write-Host "INFO: The folder 'C:\Users\$env:USERNAME\Downloads\Untrusted Files' is kept intact." -ForegroundColor Yellow
+        Write-Host "Press any key to exit..."
+        [void][System.Console]::ReadKey($true)
+        Exit
+    }
+    else {
+        Write-Host "Cancelled uninstall." -ForegroundColor Green
+        Write-Host "Press any key to exit..."
+        [void][System.Console]::ReadKey($true)
+        Exit
+    }
+}
+
 Write-Host "Press any key to start the installation..."
 [void][System.Console]::ReadKey($true)
-
-$installpath = "C:\Users\$env:USERNAME\AppData\Local\Dichromate\Application"
 
 Write-Host "Checking for Dichromate installation... " -NoNewline
 
 if (!(Test-Path $installpath)) {
     Write-Host "NOT FOUND" -ForegroundColor Red
-    $dichromate = Read-Host -Prompt "Would you like to install Dichromate(Y/N): "
+    $dichromate = Read-Host -Prompt "Do you want to install Dichromate(Y/N)"
     if (($dichromate -eq "Y") -or ($dichromate -eq "y")) {
         $originalCSV = curl.exe -s https://omahaproxy.appspot.com/all?csv=1 | ConvertFrom-Csv -Delimiter "," | Select-String "os=win; channel=stable"
         $removeWhitespace = $originalCSV -split "\s+"
@@ -34,22 +62,18 @@ else {
     Write-Host "OK" -ForegroundColor Green
 }
 
-$untrustedpath = "C:\Users\$env:USERNAME\Downloads\Untrusted Files"
-
 if (!(Test-Path $untrustedpath)) {
     New-Item -ItemType Directory -Path $untrustedpath | Out-Null
 }
-
-$darktheme = "C:\Users\$env:USERNAME\AppData\Roaming\Dichromate-Sandbox"
 
 if (!(Test-Path $darktheme)) {
     New-Item -ItemType Directory -Path $darktheme | Out-Null
 }
 
-Write-Host "Copying source files..." -NoNewline
+Write-Host "Copying source files... " -NoNewline
 
-curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dichromate-sandbox.ico
-curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dichromate.wsb
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate-sandbox.ico
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate.wsb
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/darkmode.reg
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/import.bat
 
@@ -79,11 +103,11 @@ $fileContent = Get-Content $File
 $fileContent[$lineNumber2-1] = $textToAdd
 $fileContent | Set-Content $File
 
-$lineNumber2 = 16
+$lineNumber3 = 16
 $textToAdd = "          <HostFolder>$darkmode</HostFolder>"
 $fileContent = Get-Content $File
-$fileContent[$lineNumber2-1] = $textToAdd
-$fileContent | Set-Content $File
+$fileContent[$lineNumber3-1] = $textToAdd
+$fileContent | Set-Content $File -Encoding Default
 
 $NewContent = Get-Content -Path $File |
     ForEach-Object {
@@ -113,6 +137,15 @@ $Shortcut.IconLocation = Join-Path $installpath dichromate-sandbox.ico
 $Shortcut.Save()
 
 Write-Host "Done" -ForegroundColor Green 
+
+Write-Host "Cleaning up... " -NoNewline
+
+Remove-Item dichromate-sandbox.ico
+Remove-Item dichromate.wsb
+Remove-Item darkmode.reg
+Remove-Item import.bat
+
+Write-Host "Done" -ForegroundColor Green
 
 Write-Host "The installation has completed successfully" -ForegroundColor Green
 Write-Host "Press any key to exit..."
