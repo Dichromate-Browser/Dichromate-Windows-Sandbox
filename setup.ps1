@@ -1,7 +1,6 @@
 $ErrorActionPreference = "Stop"
 
 $installpath = "C:\Users\$env:USERNAME\AppData\Local\Dichromate\Application"
-$darktheme = "C:\Users\$env:USERNAME\AppData\Roaming\Dichromate-Sandbox"
 $untrustedpath = "C:\Users\$env:USERNAME\Downloads\Untrusted Files"
 
 $uninstall = $args[0]
@@ -10,7 +9,6 @@ if ($uninstall -eq "uninstall") {
     $confirmremoval = Read-Host -Prompt "Do you want to uninstall the Windows Sandbox addon for Dichromate(Y/N)"
     if (($confirmremoval -eq "Y") -or ($confirmremoval -eq "y")) {
         Write-Host "Uninstalling Windows Sandbox Addon... " -NoNewline
-        Remove-Item -Recurse $darktheme -ErrorAction SilentlyContinue
         Remove-Item (Join-Path $installpath dichromate.wsb) -ErrorAction SilentlyContinue
         Remove-Item (Join-Path $installpath darkmode.reg) -ErrorAction SilentlyContinue
         Remove-Item (Join-Path $installpath dichromate-sandbox.ico) -ErrorAction SilentlyContinue
@@ -66,10 +64,6 @@ if (!(Test-Path $untrustedpath)) {
     New-Item -ItemType Directory -Path $untrustedpath | Out-Null
 }
 
-if (!(Test-Path $darktheme)) {
-    New-Item -ItemType Directory -Path $darktheme | Out-Null
-}
-
 Write-Host "Copying source files... " -NoNewline
 
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate-sandbox.ico
@@ -83,7 +77,7 @@ Copy-Item -Path dichromate-sandbox.ico -Destination $installpath -Force
 
 Copy-Item -Path darkmode.reg -Destination $installpath -Force
 
-Copy-Item -Path dark-mode.bat -Destination $darktheme -Force
+Copy-Item -Path dark-mode.bat -Destination $installpath -Force
 
 Write-Host "Done" -ForegroundColor Green 
 
@@ -101,12 +95,6 @@ $lineNumber2 = 11
 $textToAdd = "          <HostFolder>$untrustedpath</HostFolder>"
 $fileContent = Get-Content $File
 $fileContent[$lineNumber2-1] = $textToAdd
-$fileContent | Set-Content $File
-
-$lineNumber3 = 16
-$textToAdd = "          <HostFolder>$darktheme</HostFolder>"
-$fileContent = Get-Content $File
-$fileContent[$lineNumber3-1] = $textToAdd
 $fileContent | Set-Content $File
 
 $NewContent = Get-Content -Path $File |
