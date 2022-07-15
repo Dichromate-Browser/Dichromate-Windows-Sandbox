@@ -12,6 +12,8 @@ if ($uninstall -eq "uninstall") {
         Remove-Item (Join-Path $installpath dichromate.wsb) -ErrorAction SilentlyContinue
         Remove-Item (Join-Path $installpath darkmode.reg) -ErrorAction SilentlyContinue
         Remove-Item (Join-Path $installpath dichromate-sandbox.ico) -ErrorAction SilentlyContinue
+        Remove-Item (Join-Path $installpath wallpaper.png) -ErrorAction SilentlyContinue
+        Remove-Item (Join-Path $installpath login.bat) -ErrorAction SilentlyContinue
         Remove-Item "C:\Users\$env:USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Dichromate Sandbox.lnk" -ErrorAction SilentlyContinue
         Remove-Item "C:\Users\$env:USERNAME\Desktop\Dichromate Sandbox.lnk" -ErrorAction SilentlyContinue
         Write-Host "Done" -ForegroundColor Green
@@ -69,7 +71,8 @@ Write-Host "Copying source files... " -NoNewline
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate-sandbox.ico
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/config/dichromate.wsb
 curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/darkmode.reg
-curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/dark-mode.bat
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/login.bat
+curl.exe -s -O https://raw.githubusercontent.com/Dichromate-Browser/Dichromate-Windows-Sandbox/main/dark-mode/wallpaper.png
 
 Copy-Item -Path dichromate.wsb -Destination $installpath -Force
 
@@ -77,7 +80,9 @@ Copy-Item -Path dichromate-sandbox.ico -Destination $installpath -Force
 
 Copy-Item -Path darkmode.reg -Destination $installpath -Force
 
-Copy-Item -Path dark-mode.bat -Destination $installpath -Force
+Copy-Item -Path login.bat -Destination $installpath -Force
+
+Copy-Item -Path wallpaper.png -Destination $installpath -Force
 
 Write-Host "Done" -ForegroundColor Green 
 
@@ -131,7 +136,8 @@ Write-Host "Cleaning up... " -NoNewline
 Remove-Item dichromate-sandbox.ico
 Remove-Item dichromate.wsb
 Remove-Item darkmode.reg
-Remove-Item dark-mode.bat
+Remove-Item login.bat
+Remove-Item wallpaper.png
 
 Write-Host "Done" -ForegroundColor Green
 
